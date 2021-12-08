@@ -1,23 +1,30 @@
-import logo from './logo.svg';
 import './App.css';
+import Appbody from './components/appbody';
+import { useEffect,useState } from 'react';
+import Axios from 'axios';
+import Loader from './components/loader';
 
 function App() {
+  const [profiles,setProfile] = useState([]);
+  const [loading,setLoading] = useState(false);
+  const deletionClick=(id)=>setProfile(profiles.filter((profile)=>profile.id !== id));
+  useEffect(()=>{
+    const fetchdata=async()=>{
+       setLoading(true);
+       const {data} = await Axios.get('https://jsonplaceholder.typicode.com/users');
+       setProfile(data);
+       setLoading(false);
+    }
+    fetchdata();
+  }
+  ,[])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+       {loading?
+       <Loader/>
+       :
+       <Appbody profiles={profiles} deletionClick={deletionClick}/>
+       }
     </div>
   );
 }
